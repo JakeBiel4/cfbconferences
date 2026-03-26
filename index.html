@@ -1,9 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <title>Conference Tracker</title>
   </head>
   <body>
-    
+    <section class="main">
+      <div class="header">
+        <h1>Conference Tracker</h1>
+        <p>Select Mode:</p>
+      </div>
+      <div class="inputRow">
+        <div class="horField">
+          <label class="inputLabel" for="conference">Conference:</label>
+          <select name="conference" id="conference">
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="horField">
+          <label class="inputLabel" for="year">Year:</label>
+          <select name="year" id="year">
+            <option value="current">Current</option>
+          </select>
+        </div>
+        <button id="gen">Generate</button>
+      </div>
+      <div class="chart">
+        
+      </div>
+    </section>
+    <script src="index.js" defer></script>
   </body>
 </html>
