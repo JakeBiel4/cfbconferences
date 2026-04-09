@@ -1,0 +1,23 @@
+public class Table {
+    private DataTable table;
+
+    public Table(String path, String name, String key) {
+        table = new DataTable(path, name);
+        table.setKey(key);
+        table.fill();
+    }
+
+    public DataObject getByName(String name) {
+        for(int i = 0; i < table.getObjects().size(); ++i) {
+            if (name.equals(((DataObject)table.getObjects().get(i)).getFieldByName("Name").toString())) {
+                return (DataObject)table.getObjects().get(i);
+            }
+        }
+
+        return null;
+    }
+
+    public DataTable getTable() {
+        return table;
+    }
+}

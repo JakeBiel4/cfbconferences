@@ -1,0 +1,81 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedList;
+
+public class DataTable {
+    private String url;
+    private String tableName;
+    private TableHeader header;
+    private LinkedList<DataObject> objects;
+
+    public DataTable(String u, String t) {
+        this.url = u;
+        this.tableName = t;
+        this.header = new TableHeader(this.url, this.tableName);
+        this.objects = new LinkedList();
+    }
+
+    public void setObjects(LinkedList<DataObject> o) {
+        this.objects = o;
+    }
+
+    public void setKey(String n) {
+        this.header.setKey(n);
+    }
+
+    public void fill() {
+        String keyName = null;
+
+        for(int i = 0; i < this.header.getFields().size(); ++i) {
+            if (((DataField)this.header.getFields().get(i)).getKey()) {
+                keyName = ((DataField)this.header.getFields().get(i)).getHeader();
+            }
+        }
+
+        if (keyName == null) {
+            keyName = ((DataField)this.header.getFields().getFirst()).getHeader();
+        }
+
+        try {
+            Connection con = DriverManager.getConnection("jdbc:ucanaccess://" + this.url + ";showschema=true", (String)null, (String)null);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT " + keyName + " FROM " + this.tableName);
+            LinkedList<Object> keys = new LinkedList();
+
+            while(rs.next()) {
+                keys.add(rs.getObject(this.header.getKey().getHeader()));
+            }
+
+            for(int i = 0; i < keys.size(); ++i) {
+                LinkedList<Object> fields = new LinkedList();
+
+                for(int j = 0; j < this.header.getFields().size(); ++j) {
+                    String var10001 = ((DataField)this.header.getFields().get(j)).getHeader();
+                    rs = stmt.executeQuery("SELECT " + var10001 + " FROM " + this.tableName + " WHERE " + keyName + " = '" + String.valueOf(keys.get(i)) + "'");
+
+                    while(rs.next()) {
+                        fields.add(rs.getObject(((DataField)this.header.getFields().get(j)).getHeader()));
+                    }
+                }
+
+                DataObject dO = new DataObject(this.header.getFields());
+                dO.fill(fields);
+                this.objects.add(dO);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public LinkedList<DataObject> getObjects() {
+        return this.objects;
+    }
+
+    public DataField getKey() {
+        return this.header.getKey();
+    }
+}

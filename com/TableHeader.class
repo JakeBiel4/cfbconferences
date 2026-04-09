@@ -1,0 +1,52 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedList;
+
+public class TableHeader {
+    private LinkedList<DataField> fields = new LinkedList();
+
+    public TableHeader(String u, String t) {
+        try {
+            Connection con = DriverManager.getConnection("jdbc:ucanaccess://" + u + ";showschema=true", (String)null, (String)null);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + t);
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            for(int i = 1; i <= rsmd.getColumnCount(); ++i) {
+                this.fields.add(new DataField(Class.forName(rsmd.getColumnClassName(i)), rsmd.getColumnLabel(i), i));
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            ((Exception)e).printStackTrace();
+        }
+
+    }
+
+    public LinkedList<DataField> getFields() {
+        return this.fields;
+    }
+
+    public void setKey(String name) {
+        for(int i = 0; i < this.fields.size(); ++i) {
+            if (name.equals(((DataField)this.fields.get(i)).getHeader())) {
+                ((DataField)this.fields.get(i)).setKey(true);
+            }
+        }
+
+    }
+
+    public DataField getKey() {
+        DataField key = null;
+
+        for(int i = 0; i < this.fields.size(); ++i) {
+            if (((DataField)this.fields.get(i)).getKey()) {
+                key = (DataField)this.fields.get(i);
+            }
+        }
+
+        return key;
+    }
+}

@@ -1,0 +1,82 @@
+import java.util.LinkedList;
+
+public class DataObject {
+    private LinkedList<DataField> fields;
+    private LinkedList<FieldData> values;
+    private FieldData key;
+    private LinkedList<DataObject> attachedObjects;
+
+    public DataObject(LinkedList<DataField> f) {
+        this.fields = f;
+        this.values = new LinkedList();
+        this.attachedObjects = new LinkedList();
+    }
+
+    public void fill(LinkedList<Object> f) {
+        for(int i = 0; i < f.size(); ++i) {
+            this.values.add(new FieldData((DataField)this.fields.get(i), f.get(i)));
+        }
+
+        for(int i = 0; i < this.fields.size(); ++i) {
+            if (((DataField)this.fields.get(i)).getKey()) {
+                this.key = (FieldData)this.values.get(i);
+            }
+        }
+
+    }
+
+    public FieldData getFieldAt(int l) {
+        return (FieldData)this.values.get(l);
+    }
+
+    public Object getFieldByName(String name) {
+        Object o = null;
+        int place = 0;
+
+        for(int i = 0; i < this.values.size(); ++i) {
+            if (name.equals(((FieldData)this.values.get(i)).getField().getHeader())) {
+                o = ((FieldData)this.values.get(i)).getData();
+                place = i;
+                break;
+            }
+        }
+
+        return ((DataField)this.fields.get(place)).getDataType().cast(o);
+    }
+
+    public void setData(String f, Object d) {
+        int place = 0;
+
+        for(int i = 0; i < this.values.size(); ++i) {
+            if (((FieldData)this.values.get(i)).getField().getHeader().equals(f)) {
+                place = i;
+            }
+        }
+
+        this.values.set(place, new FieldData(((FieldData)this.values.get(place)).getField(), ((FieldData)this.values.get(place)).getField().getDataType().cast(d)));
+    }
+
+    public int getFieldNumber() {
+        return this.values.size();
+    }
+
+    public FieldData getKey() {
+        return this.key;
+    }
+
+    public LinkedList<FieldData> getValues() {
+        return this.values;
+    }
+
+    public void attachObject(DataObject d, int i) {
+        this.attachedObjects.add(i, d);
+    }
+
+    public LinkedList<DataObject> getAttachedObjects() {
+        return this.attachedObjects;
+    }
+
+    public LinkedList<DataField> getFields() {
+        return this.fields;
+    }
+}

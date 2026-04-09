@@ -1,0 +1,33 @@
+public class DataField {
+    private String header;
+    private boolean key;
+    private Class<?> dataType;
+    private int location;
+
+    public <T> DataField(Class<T> d, String h, int l) {
+        this.dataType = d;
+        this.header = h;
+        this.key = false;
+        this.location = l;
+    }
+
+    public void setKey(boolean k) {
+        this.key = k;
+    }
+
+    public boolean getKey() {
+        return this.key;
+    }
+
+    public String getHeader() {
+        return this.header;
+    }
+
+    public int getLocation() {
+        return this.location;
+    }
+
+    public Class getDataType() {
+        return this.dataType;
+    }
+}
